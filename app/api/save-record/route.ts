@@ -40,12 +40,29 @@ const RecordSchema = new mongoose.Schema({
     confidence: { type: Number, required: true },
   },
   ppgData: { type: [Number], required: true },
+  subjectId: { type: String, required: false },
   timestamp: { type: Date, default: Date.now },
 });
 
 // Use an existing model if available or compile a new one
 const Record = mongoose.models.Record || mongoose.model('Record', RecordSchema);
 
+// GET /api s
+export async function GET() {
+  try {
+    await dbConnect();
+    const records = await Record.find({});
+
+    return NextResponse.json({ success: true, data: records });
+  } catch (error: any) {
+    return NextResponse.json(
+      { success: false, error: error.message },
+      { status: 400 }
+    );
+  }
+}
+
+// POST /api/save-record
 export async function POST(request: Request) {
   try {
     await dbConnect();
@@ -56,6 +73,7 @@ export async function POST(request: Request) {
       heartRate: body.heartRate,
       hrv: body.hrv,
       ppgData: body.ppgData, // The whole ppgData array is posted here
+      subjectId: body.subjectId || '',
       timestamp: body.timestamp || new Date(),
     });
 

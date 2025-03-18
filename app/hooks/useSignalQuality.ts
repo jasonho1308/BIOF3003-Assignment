@@ -29,12 +29,7 @@ export default function useSignalQuality(
   }, []);
 
   useEffect(() => {
-    if (ppgData.length >= 100) {
-      assessSignalQuality(ppgData);
-    }
-  }, [ppgData]);
-
-  const assessSignalQuality = async (signal: number[]) => {
+    const assessSignalQuality = async (signal: number[]) => {
     if (!modelRef.current || signal.length < 100) return;
 
     try {
@@ -58,7 +53,13 @@ export default function useSignalQuality(
     } catch (error) {
       console.error('Error assessing signal quality:', error);
     }
-  };
+  }
+    if (ppgData.length >= 100) {
+      assessSignalQuality(ppgData);
+    }
+  }, [ppgData]);
+
+  
 
   const calculateFeatures = (signal: number[]): number[] => {
     if (!signal.length) return new Array(8).fill(0);

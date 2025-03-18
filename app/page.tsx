@@ -1,6 +1,6 @@
 // app/page.tsx
 'use client';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import CameraFeed from './components/CameraFeed';
 import MetricsCard from './components/MetricsCard';
 import SignalCombinationSelector from './components/SignalCombinationSelector';
@@ -14,6 +14,9 @@ export default function Home() {
   const [isUploading, setIsUploading] = useState(false);
   const [signalCombination, setSignalCombination] = useState('default');
   const [showConfig, setShowConfig] = useState(false);
+  const [currentSubject, setCurrentSubject] = useState('');
+  const [confirmedSubject, setConfirmedSubject] = useState('');
+
 
   // Define refs for video and canvas
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -38,7 +41,7 @@ export default function Home() {
     } else {
       stopCamera();
     }
-  }, [isRecording]);
+  }, [isRecording, startCamera, stopCamera]);
 
   useEffect(() => {
     let animationFrame: number;
@@ -54,25 +57,9 @@ export default function Home() {
     return () => {
       cancelAnimationFrame(animationFrame); // Clean up animation frame on unmount
     };
-  }, [isRecording]);
+  }, [isRecording, processFrame]);
 
-  // Automatically send data every 10 seconds
-  // Automatically send data every second when sampling is enabled
-  useEffect(() => {
-    let intervalId: NodeJS.Timeout | null = null;
-
-    if (isSampling && ppgData.length > 0) {
-      intervalId = setInterval(() => {
-        pushDataToMongo();
-      }, 10000); // Send data every second
-    }
-
-    return () => {
-      if (intervalId) clearInterval(intervalId);
-    };
-  }, [isSampling, ppgData]);
-
-  const pushDataToMongo = async () => {
+  const pushDataToMongo = useCallback(async () => {
     if (isUploading) return; // Prevent overlapping calls
 
     setIsUploading(true); // Lock the function
@@ -92,6 +79,7 @@ export default function Home() {
       },
 
       ppgData: ppgData, // Use the provided ppgData array
+      subjectId: confirmedSubject ? confirmedSubject : "",
       timestamp: new Date(),
     };
 
@@ -116,6 +104,31 @@ export default function Home() {
     } finally {
       setIsUploading(false); // Unlock the function
     }
+  }, [isUploading, ppgData, heartRate, hrv, confirmedSubject]);
+
+  // Automatically send data every 10 seconds
+  // Automatically send data every second when sampling is enabled
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout | null = null;
+
+    if (isSampling && ppgData.length > 0) {
+      intervalId = setInterval(() => {
+        pushDataToMongo();
+      }, 10000); // Send data every second
+    }
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [isSampling, ppgData, pushDataToMongo]);
+
+  // Confirm User Function
+  const confirmUser = () => {
+    if (currentSubject.trim()) {
+      setConfirmedSubject(currentSubject.trim());
+    } else {
+      alert('Please enter a valid Subject ID.');
+    }
   };
 
   return (
@@ -127,22 +140,20 @@ export default function Home() {
         {/* Recording Button */}
         <button
           onClick={() => setIsRecording(!isRecording)}
-          className={`p-3 rounded-lg text-sm transition-all duration-300 ${
-            isRecording
-              ? 'bg-red-500 hover:bg-red-600 text-white'
-              : 'bg-cyan-500 hover:bg-cyan-600 text-white'
-          }`}
+          className={`p-3 rounded-lg text-sm transition-all duration-300 ${isRecording
+            ? 'bg-red-500 hover:bg-red-600 text-white'
+            : 'bg-cyan-500 hover:bg-cyan-600 text-white'
+            }`}
         >
           {isRecording ? '⏹ STOP' : '⏺ START'} RECORDING
         </button>
         {/* Sampling Button */}
         <button
           onClick={() => setIsSampling(!isSampling)}
-          className={`p-3 rounded-lg text-sm transition-all duration-300 ml-2 ${
-            isSampling
-              ? 'bg-green-500 hover:bg-green-600 text-white'
-              : 'bg-gray-500 hover:bg-gray-600 text-white'
-          }`}
+          className={`p-3 rounded-lg text-sm transition-all duration-300 ml-2 ${isSampling
+            ? 'bg-green-500 hover:bg-green-600 text-white'
+            : 'bg-gray-500 hover:bg-gray-600 text-white'
+            }`}
           disabled={!isRecording} // Enable only when recording is active
         >
           {isSampling ? '⏹ STOP SAMPLING' : '⏺ START SAMPLING'}
@@ -168,6 +179,30 @@ export default function Home() {
               setSignalCombination={setSignalCombination}
             />
           )}
+          <div>
+            {/* Input Field */}
+            <input
+              type="text"
+              value={currentSubject}
+              onChange={(e) =>
+                setCurrentSubject(e.target.value)
+              }
+              placeholder="Enter Subject ID"
+              className="border border-gray-300 rounded-md p-2"
+            />
+            {/* Confirm Button */}
+            <button
+              onClick={confirmUser}
+              className="bg-cyan-500 text-white px-4 py-2 rounded-md ml-2"
+            >
+              Confirm User
+            </button>
+          </div>
+          <div>
+
+            {confirmedSubject ? <h1>Subject ID: {confirmedSubject}</h1> : null}
+
+          </div>
         </div>
 
         {/* Right Column: Chart and Metrics */}
