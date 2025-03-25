@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 
 export default {
+  darkMode: 'class', // Enable dark mode with the 'class' strategy
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -15,6 +16,11 @@ export default {
         secondary: "#10b981", // Green
         danger: "#ef4444", // Red
         neutral: "#f3f4f6", // Light Gray
+        darkBackground: "#1a202c", // Dark mode background
+        darkForeground: "#2d3748", // Dark mode foreground
+        darkPrimary: "#0ea5e9", // Dark mode primary
+        darkSecondary: "#059669", // Dark mode secondary
+        darkDanger: "#dc2626", // Dark mode danger
       },
       spacing: {
         18: "4.5rem", // Custom spacing

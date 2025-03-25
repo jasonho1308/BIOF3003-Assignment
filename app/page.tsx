@@ -187,19 +187,19 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col items-center p-6 bg-neutral min-h-screen">
+    <div className="flex flex-col items-center p-6 bg-neutral dark:bg-darkBackground min-h-screen">
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row items-center justify-between w-full max-w-5xl mb-6 bg-white shadow-card p-4 rounded-lg">
+      <div className="flex flex-col md:flex-row items-center justify-between w-full max-w-5xl mb-6 bg-white dark:bg-darkForeground shadow-card p-4 rounded-lg">
         {/* Title */}
-        <h1 className="text-4xl font-bold text-primary">HeartLen</h1>
+        <h1 className="text-4xl font-bold text-primary dark:text-darkPrimary">HeartLen</h1>
         {/* Buttons */}
         <div className="flex space-x-4 mt-4 md:mt-0">
           {/* Recording Button */}
           <button
             onClick={() => setIsRecording(!isRecording)}
             className={`p-3 rounded-lg text-sm transition-all duration-300 ${isRecording
-              ? 'bg-danger hover:bg-red-600 text-white'
-              : 'bg-primary hover:bg-cyan-600 text-white'
+              ? 'bg-danger dark:bg-darkDanger hover:bg-red-600 dark:hover:bg-red-700 text-white'
+              : 'bg-primary dark:bg-darkPrimary hover:bg-cyan-600 dark:hover:bg-cyan-700 text-white'
               }`}
           >
             {isRecording ? '⏹ STOP' : '⏺ START'} RECORDING
@@ -208,8 +208,8 @@ export default function Home() {
           <button
             onClick={() => setIsSampling(!isSampling)}
             className={`p-3 rounded-lg text-sm transition-all duration-300 ${isSampling
-              ? 'bg-secondary hover:bg-green-600 text-white'
-              : 'bg-gray-500 hover:bg-gray-600 text-white'
+              ? 'bg-secondary dark:bg-darkSecondary hover:bg-green-600 dark:hover:bg-green-700 text-white'
+              : 'bg-gray-500 dark:bg-darkForeground hover:bg-gray-600 dark:hover:bg-gray-700 text-white'
               }`}
             disabled={!isRecording} // Enable only when recording is active
           >
@@ -223,11 +223,11 @@ export default function Home() {
         {/* Left Column: Camera Feed and Config */}
         <div className="space-y-6">
           {/* Camera Feed with Toggle Config */}
-          <div className="bg-white shadow-card p-4 rounded-lg">
+          <div className="bg-white dark:bg-darkForeground shadow-card p-4 rounded-lg">
             <CameraFeed videoRef={videoRef} canvasRef={canvasRef} />
             <button
               onClick={() => setShowConfig((prev) => !prev)}
-              className="mt-4 px-4 py-2 bg-primary text-white rounded hover:bg-cyan-600 w-full"
+              className="mt-4 px-4 py-2 bg-primary dark:bg-darkPrimary text-white rounded hover:bg-cyan-600 dark:hover:bg-cyan-700 w-full"
             >
               Toggle Config
             </button>
@@ -239,18 +239,18 @@ export default function Home() {
             )}
           </div>
           {/* Subject Input and Confirmation */}
-          <div className="bg-white shadow-card p-4 rounded-lg">
+          <div className="bg-white dark:bg-darkForeground shadow-card p-4 rounded-lg">
             <div className="flex items-center space-x-4">
               <input
                 type="text"
                 value={currentSubject}
                 onChange={(e) => setCurrentSubject(e.target.value)}
                 placeholder="Enter Subject ID"
-                className="flex-1 border border-gray-300 rounded-md p-2"
+                className="flex-1 border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-neutral dark:bg-darkBackground text-gray-900 dark:text-gray-100"
               />
               <button
                 onClick={confirmUser}
-                className="bg-primary text-white px-4 py-2 rounded-md"
+                className="bg-primary dark:bg-darkPrimary text-white px-4 py-2 rounded-md"
                 disabled={loading} // Disable when loading
               >
                 {loading ? 'Loading...' : 'Confirm User'}
@@ -259,14 +259,14 @@ export default function Home() {
             <div className="mt-4">
               {confirmedSubject && !loading && (
                 lastAccess ? (
-                  <div className="text-sm text-gray-700">
+                  <div className="text-sm text-gray-700 dark:text-gray-300">
                     <p><strong>Subject Id:</strong> {confirmedSubject}</p>
                     <p><strong>Last Access:</strong> {lastAccess.toLocaleString()}</p>
                     <p><strong>Avg Heart Rate:</strong> {historicalData.avgHeartRate} BPM</p>
                     <p><strong>Avg HRV:</strong> {historicalData.avgHRV} ms</p>
                   </div>
                 ) : (
-                  <p className="text-sm text-gray-500">No previous records found for Subject Id: {confirmedSubject}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">No previous records found for Subject Id: {confirmedSubject}</p>
                 )
               )}
             </div>
@@ -276,17 +276,17 @@ export default function Home() {
         {/* Right Column: Chart and Save Data */}
         <div className="space-y-6">
           {/* Chart with Save Data */}
-          <div className="bg-white shadow-card p-4 rounded-lg">
+          <div className="bg-white dark:bg-darkForeground shadow-card p-4 rounded-lg">
             <ChartComponent ppgData={ppgData} valleys={valleys} />
             <button
               onClick={pushDataToMongo}
-              className="mt-4 w-full px-4 py-2 bg-secondary text-white rounded hover:bg-green-600"
+              className="mt-4 w-full px-4 py-2 bg-secondary dark:bg-darkSecondary text-white rounded hover:bg-green-600 dark:hover:bg-green-700"
             >
               Save Data to MongoDB
             </button>
           </div>
           {/* Metrics Cards */}
-          <div className="bg-white shadow-card p-4 rounded-lg grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="bg-white dark:bg-darkForeground shadow-card p-4 rounded-lg grid grid-cols-1 sm:grid-cols-2 gap-4">
             <MetricsCard
               title="HEART RATE"
               value={heartRate || {}} // Pass the HeartRateResult object
