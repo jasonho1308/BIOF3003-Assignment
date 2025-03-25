@@ -1,13 +1,12 @@
 // app/page.tsx
 'use client';
-import { useState, useRef, useEffect, useCallback, use } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import CameraFeed from './components/CameraFeed';
 import MetricsCard from './components/MetricsCard';
 import SignalCombinationSelector from './components/SignalCombinationSelector';
 import ChartComponent from './components/ChartComponent';
 import usePPGProcessing from './hooks/usePPGProcessing';
 import useSignalQuality from './hooks/useSignalQuality';
-import { set } from 'mongoose';
 
 export default function Home() {
   const [isRecording, setIsRecording] = useState(false);
