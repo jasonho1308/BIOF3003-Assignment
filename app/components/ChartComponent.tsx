@@ -60,40 +60,35 @@ export default function ChartComponent({
       y: {
         beginAtZero: false,
         grid: {
-          color: () =>
-            document.documentElement.classList.contains('dark')
-              ? 'rgba(255, 255, 255, 0.1)' // Light grid lines for dark mode
-              : 'rgba(0, 0, 0, 0.1)', // Dark grid lines for light mode
+          color: document.documentElement.classList.contains('dark')
+            ? 'rgba(255, 255, 255, 0.1)' // Light grid lines for dark mode
+            : 'rgba(0, 0, 0, 0.1)', // Dark grid lines for light mode
         },
         ticks: {
-          color: () =>
-            document.documentElement.classList.contains('dark')
-              ? 'rgba(255, 255, 255, 0.9)' // Light tick labels for dark mode
-              : 'rgba(0, 0, 0, 0.9)', // Dark tick labels for light mode
+          color: document.documentElement.classList.contains('dark')
+            ? 'rgba(255, 255, 255, 0.9)' // Light tick labels for dark mode
+            : 'rgba(0, 0, 0, 0.9)', // Dark tick labels for light mode
         },
       },
       x: {
         grid: {
-          color: () =>
-            document.documentElement.classList.contains('dark')
-              ? 'rgba(255, 255, 255, 0.1)' // Light grid lines for dark mode
-              : 'rgba(0, 0, 0, 0.1)', // Dark grid lines for light mode
+          color: document.documentElement.classList.contains('dark')
+            ? 'rgba(255, 255, 255, 0.1)' // Light grid lines for dark mode
+            : 'rgba(0, 0, 0, 0.1)', // Dark grid lines for light mode
         },
         ticks: {
-          color: () =>
-            document.documentElement.classList.contains('dark')
-              ? 'rgba(255, 255, 255, 0.9)' // Light tick labels for dark mode
-              : 'rgba(0, 0, 0, 0.9)', // Dark tick labels for light mode
+          color: document.documentElement.classList.contains('dark')
+            ? 'rgba(255, 255, 255, 0.9)' // Light tick labels for dark mode
+            : 'rgba(0, 0, 0, 0.9)', // Dark tick labels for light mode
         },
       },
     },
     plugins: {
       legend: {
         labels: {
-          color: () =>
-            document.documentElement.classList.contains('dark')
-              ? 'rgba(255, 255, 255, 0.9)' // Light legend labels for dark mode
-              : 'rgba(0, 0, 0, 0.9)', // Dark legend labels for light mode
+          color: document.documentElement.classList.contains('dark')
+            ? 'rgba(255, 255, 255, 0.9)' // Light legend labels for dark mode
+            : 'rgba(0, 0, 0, 0.9)', // Dark legend labels for light mode
         },
       },
       title: {
