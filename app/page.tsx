@@ -1,12 +1,13 @@
 // app/page.tsx
 'use client';
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, use } from 'react';
 import CameraFeed from './components/CameraFeed';
 import MetricsCard from './components/MetricsCard';
 import SignalCombinationSelector from './components/SignalCombinationSelector';
 import ChartComponent from './components/ChartComponent';
 import usePPGProcessing from './hooks/usePPGProcessing';
 import useSignalQuality from './hooks/useSignalQuality';
+import { set } from 'mongoose';
 
 export default function Home() {
   const [isRecording, setIsRecording] = useState(false);
@@ -16,6 +17,7 @@ export default function Home() {
   const [showConfig, setShowConfig] = useState(false);
   const [currentSubject, setCurrentSubject] = useState('');
   const [confirmedSubject, setConfirmedSubject] = useState('');
+
 
 
   // Define refs for video and canvas
@@ -41,7 +43,7 @@ export default function Home() {
     } else {
       stopCamera();
     }
-  }, [isRecording, startCamera, stopCamera]);
+  }, [isRecording]);
 
   useEffect(() => {
     let animationFrame: number;
@@ -57,7 +59,52 @@ export default function Home() {
     return () => {
       cancelAnimationFrame(animationFrame); // Clean up animation frame on unmount
     };
-  }, [isRecording, processFrame]);
+  }, [isRecording]);
+
+  // Get the last access time and historical data
+  const [lastAccess, setLastAccess] = useState<Date | null>(null);
+  const [historicalData, setHistoricalData] = useState({
+    avgHeartRate: 0,
+    avgHRV: 0,
+  });
+
+  // Loading state for fetching last access
+  const [loading, setIsLoading] = useState(false);
+
+
+  const fetchLastAccess = async () => {
+    if (confirmedSubject) {
+      try {
+        const response = await fetch(`/api/last-access?subjectId=${confirmedSubject}`);
+        const result = await response.json();
+        if (result.success) {
+          setLastAccess(new Date(result.lastAccess));
+          setHistoricalData({
+            avgHeartRate: result.avgHeartRate || 0,
+            avgHRV: result.avgHRV || 0,
+          });
+
+        } else if (result.error == 'No records found') {
+          setLastAccess(null);
+          setHistoricalData({
+            avgHeartRate: 0,
+            avgHRV: 0,
+          });
+          console.log('Failed to fetch last access:', result.error);
+        } else {
+          setLastAccess(null);
+          setHistoricalData({
+            avgHeartRate: 0,
+            avgHRV: 0,
+          });
+          console.error('Failed to fetch last access:', result.error);
+        }
+      } catch (error) {
+        console.error('Error fetching last access:', error);
+      } 
+    }
+    setIsLoading(false);
+  };
 
   const pushDataToMongo = useCallback(async () => {
     if (isUploading) return; // Prevent overlapping calls
@@ -69,28 +116,28 @@ export default function Home() {
     }
     // Prepare the record data – adjust or add additional fields as needed
     const recordData = {
+      subjectId: confirmedSubject || 'unknown',
       heartRate: {
-        bpm: isNaN(heartRate.bpm) ? 0 : heartRate.bpm, // Replace NaN with "ERRATIC"
+        bpm: isNaN(heartRate.bpm) ? 0 : heartRate.bpm,
         confidence: hrv.confidence || 0,
       },
       hrv: {
-        sdnn: isNaN(hrv.sdnn) ? 0 : hrv.sdnn, // Replace NaN with "ERRATIC"
+        sdnn: isNaN(hrv.sdnn) ? 0 : hrv.sdnn,
         confidence: hrv.confidence || 0,
       },
-
-      ppgData: ppgData, // Use the provided ppgData array
-      subjectId: confirmedSubject ? confirmedSubject : "",
+      ppgData: ppgData,
       timestamp: new Date(),
     };
 
     try {
+      const payload = { ...recordData, subjectId: confirmedSubject || 'unknown' };
       // Make a POST request to your backend endpoint that handles saving to MongoDB
       const response = await fetch('/api/save-record', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(recordData),
+        body: JSON.stringify(payload),
       });
 
       const result = await response.json();
@@ -99,7 +146,7 @@ export default function Home() {
       } else {
         console.error('❌ Upload failed:', result.error);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('🚨 Network error - failed to save data:', error);
     } finally {
       setIsUploading(false); // Unlock the function
@@ -122,8 +169,17 @@ export default function Home() {
     };
   }, [isSampling, ppgData, pushDataToMongo]);
 
+
+  useEffect(() => {
+    fetchLastAccess();
+    return;
+  }, [confirmedSubject]);
+
+
   // Confirm User Function
   const confirmUser = () => {
+    console.log('Confirming user:', currentSubject);
+    setIsLoading(true)
     if (currentSubject.trim()) {
       setConfirmedSubject(currentSubject.trim());
     } else {
@@ -194,14 +250,24 @@ export default function Home() {
             <button
               onClick={confirmUser}
               className="bg-cyan-500 text-white px-4 py-2 rounded-md ml-2"
+              disabled={loading} // Disable when loading
             >
-              Confirm User
+              {loading ? 'Loading...' : 'Confirm User'}
             </button>
           </div>
           <div>
-
-            {confirmedSubject ? <h1>Subject ID: {confirmedSubject}</h1> : null}
-
+            {confirmedSubject && !loading && (
+              lastAccess ? (
+                <div>
+                  <p>Subject Id: {confirmedSubject}</p>
+                  <p>Last Access: {lastAccess.toLocaleString()}</p>
+                  <p>Avg Heart Rate: {historicalData.avgHeartRate} BPM</p>
+                  <p>Avg HRV: {historicalData.avgHRV} ms</p>
+                </div>
+              ) : (
+                <p>No previous records found for Subject Id: {confirmedSubject}</p>
+              )
+            )}
           </div>
         </div>
 
