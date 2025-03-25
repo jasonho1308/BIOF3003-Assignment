@@ -16,8 +16,17 @@ export default function Home() {
   const [showConfig, setShowConfig] = useState(false);
   const [currentSubject, setCurrentSubject] = useState('');
   const [confirmedSubject, setConfirmedSubject] = useState('');
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
-
+  // Toggle dark mode
+  const toggleDarkMode = () => {
+    setIsDarkMode((prev) => !prev);
+    if (document.documentElement.classList.contains('dark')) {
+      document.documentElement.classList.remove('dark');
+    } else {
+      document.documentElement.classList.add('dark');
+    }
+  };
 
   // Define refs for video and canvas
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -209,7 +218,7 @@ export default function Home() {
             onClick={() => setIsSampling(!isSampling)}
             className={`p-3 rounded-lg text-sm transition-all duration-300 ${isSampling
               ? 'bg-secondary dark:bg-darkSecondary hover:bg-green-600 dark:hover:bg-green-700 text-white'
-              : 'bg-gray-500 dark:bg-darkForeground hover:bg-gray-600 dark:hover:bg-gray-700 text-white'
+              : 'bg-gray-500 dark:bg-gray-600 hover:bg-gray-600 dark:hover:bg-gray-700 text-white'
               }`}
             disabled={!isRecording} // Enable only when recording is active
           >
@@ -305,6 +314,14 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* Floating Dark Mode Toggle Button */}
+      <button
+        onClick={toggleDarkMode}
+        className="fixed bottom-4 right-4 p-3 rounded-full bg-gray-300 dark:bg-gray-700 text-gray-900 dark:text-gray-100 hover:bg-gray-400 dark:hover:bg-gray-600 shadow-lg transition-all duration-300"
+      >
+        {isDarkMode ? '☀️' : '🌙'}
+      </button>
     </div>
   );
 }

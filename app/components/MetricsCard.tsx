@@ -12,8 +12,8 @@ export default function MetricsCard({
   confidence,
 }: MetricsCardProps) {
   return (
-    <div className="bg-white dark:bg-darkForeground p-4 rounded-lg shadow-card flex-1 min-w-[150px]">
-      <p className="text-gray-500 dark:text-gray-400">{title}</p>
+    <div className="bg-gray-200 dark:bg-gray-900 p-4 rounded-lg shadow-card flex-1 min-w-[150px]">
+      <p className="text-gray-700 dark:text-gray-400">{title}</p>
       <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
         {typeof value === 'number' && value > 0
           ? `${value} ${unit || ''}` // Display numeric values with optional units
@@ -29,7 +29,7 @@ export default function MetricsCard({
         {/* Fallback for undefined or invalid values */}
       </h2>
       {confidence !== undefined && (
-        <p className="text-sm text-gray-500 dark:text-gray-400">
+        <p className="text-sm text-gray-600 dark:text-gray-500">
           Confidence: {confidence.toFixed(1)}%
         </p>
       )}
