@@ -186,12 +186,15 @@ export default function Home() {
 
   // Confirm User Function
   const confirmUser = () => {
-    console.log('Confirming user:', currentSubject);
     setIsLoading(true)
-    if (currentSubject.trim()) {
-      setConfirmedSubject(currentSubject.trim());
+    if (currentSubject.trim() == confirmedSubject) {
+      setIsLoading(false);
     } else {
-      alert('Please enter a valid Subject ID.');
+      if (currentSubject.trim()) {
+        setConfirmedSubject(currentSubject.trim());
+      } else {
+        alert('Please enter a valid Subject ID.');
+      }
     }
   };
 
@@ -288,7 +291,7 @@ export default function Home() {
             </div>
             <div className="mt-4 flex-1 flex">
               {loading ? (
-                <div className="text-gray-500 dark:text-gray-400 text-lg">Loading...</div>
+                <div className="text-gray-500 dark:text-gray-400 text-lg items-center">Loading...</div>
               ) : confirmedSubject && (
                 lastAccess ? (
                   <div className="text-gray-700 dark:text-gray-300 text-lg">
