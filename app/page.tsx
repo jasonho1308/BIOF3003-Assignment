@@ -100,7 +100,7 @@ export default function Home() {
         }
       } catch (error) {
         console.error('Error fetching last access:', error);
-      } 
+      }
     }
     setIsLoading(false);
   };
@@ -187,119 +187,116 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col items-center p-4">
+    <div className="flex flex-col items-center p-6 bg-neutral min-h-screen">
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row items-center justify-between w-full max-w-4xl mb-4">
+      <div className="flex flex-col md:flex-row items-center justify-between w-full max-w-5xl mb-6 bg-white shadow-card p-4 rounded-lg">
         {/* Title */}
-        <h1 className="text-3xl font-bold">HeartLen</h1>
-        {/* Recording Button */}
-        <button
-          onClick={() => setIsRecording(!isRecording)}
-          className={`p-3 rounded-lg text-sm transition-all duration-300 ${isRecording
-            ? 'bg-red-500 hover:bg-red-600 text-white'
-            : 'bg-cyan-500 hover:bg-cyan-600 text-white'
-            }`}
-        >
-          {isRecording ? '⏹ STOP' : '⏺ START'} RECORDING
-        </button>
-        {/* Sampling Button */}
-        <button
-          onClick={() => setIsSampling(!isSampling)}
-          className={`p-3 rounded-lg text-sm transition-all duration-300 ml-2 ${isSampling
-            ? 'bg-green-500 hover:bg-green-600 text-white'
-            : 'bg-gray-500 hover:bg-gray-600 text-white'
-            }`}
-          disabled={!isRecording} // Enable only when recording is active
-        >
-          {isSampling ? '⏹ STOP SAMPLING' : '⏺ START SAMPLING'}
-        </button>
+        <h1 className="text-4xl font-bold text-primary">HeartLen</h1>
+        {/* Buttons */}
+        <div className="flex space-x-4 mt-4 md:mt-0">
+          {/* Recording Button */}
+          <button
+            onClick={() => setIsRecording(!isRecording)}
+            className={`p-3 rounded-lg text-sm transition-all duration-300 ${isRecording
+              ? 'bg-danger hover:bg-red-600 text-white'
+              : 'bg-primary hover:bg-cyan-600 text-white'
+              }`}
+          >
+            {isRecording ? '⏹ STOP' : '⏺ START'} RECORDING
+          </button>
+          {/* Sampling Button */}
+          <button
+            onClick={() => setIsSampling(!isSampling)}
+            className={`p-3 rounded-lg text-sm transition-all duration-300 ${isSampling
+              ? 'bg-secondary hover:bg-green-600 text-white'
+              : 'bg-gray-500 hover:bg-gray-600 text-white'
+              }`}
+            disabled={!isRecording} // Enable only when recording is active
+          >
+            {isSampling ? '⏹ STOP SAMPLING' : '⏺ START SAMPLING'}
+          </button>
+        </div>
       </div>
 
       {/* Main Grid: Camera and Chart Side by Side */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-4xl">
-        {/* Left Column: Camera Feed */}
-        <div className="space-y-4">
-          {/* Camera Feed */}
-          <CameraFeed videoRef={videoRef} canvasRef={canvasRef} />
-          {/* Signal Combination Selector */}
-          <button
-            onClick={() => setShowConfig((prev) => !prev)}
-            className="px-4 py-2 bg-cyan-500 text-white rounded hover:bg-cyan-600 w-full"
-          >
-            Toggle Config
-          </button>
-          {showConfig && (
-            <SignalCombinationSelector
-              signalCombination={signalCombination}
-              setSignalCombination={setSignalCombination}
-            />
-          )}
-          <div>
-            {/* Input Field */}
-            <input
-              type="text"
-              value={currentSubject}
-              onChange={(e) =>
-                setCurrentSubject(e.target.value)
-              }
-              placeholder="Enter Subject ID"
-              className="border border-gray-300 rounded-md p-2"
-            />
-            {/* Confirm Button */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-5xl">
+        {/* Left Column: Camera Feed and Config */}
+        <div className="space-y-6">
+          {/* Camera Feed with Toggle Config */}
+          <div className="bg-white shadow-card p-4 rounded-lg">
+            <CameraFeed videoRef={videoRef} canvasRef={canvasRef} />
             <button
-              onClick={confirmUser}
-              className="bg-cyan-500 text-white px-4 py-2 rounded-md ml-2"
-              disabled={loading} // Disable when loading
+              onClick={() => setShowConfig((prev) => !prev)}
+              className="mt-4 px-4 py-2 bg-primary text-white rounded hover:bg-cyan-600 w-full"
             >
-              {loading ? 'Loading...' : 'Confirm User'}
+              Toggle Config
             </button>
-          </div>
-          <div>
-            {confirmedSubject && !loading && (
-              lastAccess ? (
-                <div>
-                  <p>Subject Id: {confirmedSubject}</p>
-                  <p>Last Access: {lastAccess.toLocaleString()}</p>
-                  <p>Avg Heart Rate: {historicalData.avgHeartRate} BPM</p>
-                  <p>Avg HRV: {historicalData.avgHRV} ms</p>
-                </div>
-              ) : (
-                <p>No previous records found for Subject Id: {confirmedSubject}</p>
-              )
+            {showConfig && (
+              <SignalCombinationSelector
+                signalCombination={signalCombination}
+                setSignalCombination={setSignalCombination}
+              />
             )}
+          </div>
+          {/* Subject Input and Confirmation */}
+          <div className="bg-white shadow-card p-4 rounded-lg">
+            <div className="flex items-center space-x-4">
+              <input
+                type="text"
+                value={currentSubject}
+                onChange={(e) => setCurrentSubject(e.target.value)}
+                placeholder="Enter Subject ID"
+                className="flex-1 border border-gray-300 rounded-md p-2"
+              />
+              <button
+                onClick={confirmUser}
+                className="bg-primary text-white px-4 py-2 rounded-md"
+                disabled={loading} // Disable when loading
+              >
+                {loading ? 'Loading...' : 'Confirm User'}
+              </button>
+            </div>
+            <div className="mt-4">
+              {confirmedSubject && !loading && (
+                lastAccess ? (
+                  <div className="text-sm text-gray-700">
+                    <p><strong>Subject Id:</strong> {confirmedSubject}</p>
+                    <p><strong>Last Access:</strong> {lastAccess.toLocaleString()}</p>
+                    <p><strong>Avg Heart Rate:</strong> {historicalData.avgHeartRate} BPM</p>
+                    <p><strong>Avg HRV:</strong> {historicalData.avgHRV} ms</p>
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-500">No previous records found for Subject Id: {confirmedSubject}</p>
+                )
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Right Column: Chart and Metrics */}
-        <div className="space-y-4">
-          {/* Chart */}
-          <ChartComponent ppgData={ppgData} valleys={valleys} />
-
-          {/* Save Data to MongoDB Button */}
-          <button
-            onClick={pushDataToMongo}
-            className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-          >
-            Save Data to MongoDB
-          </button>
-
-          {/* Metrics Cards (Side by Side) */}
-          <div className="flex flex-wrap gap-4">
-            {/* Heart Rate Card */}
+        {/* Right Column: Chart and Save Data */}
+        <div className="space-y-6">
+          {/* Chart with Save Data */}
+          <div className="bg-white shadow-card p-4 rounded-lg">
+            <ChartComponent ppgData={ppgData} valleys={valleys} />
+            <button
+              onClick={pushDataToMongo}
+              className="mt-4 w-full px-4 py-2 bg-secondary text-white rounded hover:bg-green-600"
+            >
+              Save Data to MongoDB
+            </button>
+          </div>
+          {/* Metrics Cards */}
+          <div className="bg-white shadow-card p-4 rounded-lg grid grid-cols-1 sm:grid-cols-2 gap-4">
             <MetricsCard
               title="HEART RATE"
               value={heartRate || {}} // Pass the HeartRateResult object
               confidence={heartRate?.confidence || 0}
             />
-
-            {/* HRV Card */}
             <MetricsCard
               title="HRV"
               value={hrv || {}} // Pass the HRVResult object
               confidence={hrv?.confidence || 0}
             />
-
-            {/* Signal Quality Card (Fallback for now) */}
             <MetricsCard
               title="SIGNAL QUALITY"
               value={signalQuality || '--'} // String value for signal quality

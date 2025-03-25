@@ -69,7 +69,7 @@ export default function ChartComponent({
   return (
     <div className="bg-white p-4 rounded-lg shadow-md">
       <h2 className="text-lg font-semibold mb-2">PPG Signal</h2>
-      <div style={{ height: '300px' }}>
+      <div className="h-72"> {/* Adjust height to match the camera feed */}
         <Line data={chartData} options={chartOptions} />
       </div>
     </div>
