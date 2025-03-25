@@ -228,65 +228,35 @@ export default function Home() {
       </div>
 
       {/* Main Grid: Camera and Chart Side by Side */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-5xl">
-        {/* Left Column: Camera Feed and Config */}
-        <div className="space-y-6">
+      <div className="grid grid-rows-2 gap-6 w-full max-w-5xl">
+        {/* Top Row: Camera Feed and Chart */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Camera Feed with Toggle Config */}
-          <div className="bg-white dark:bg-darkForeground shadow-card p-4 rounded-lg">
-            <CameraFeed videoRef={videoRef} canvasRef={canvasRef} />
-            <button
-              onClick={() => setShowConfig((prev) => !prev)}
-              className="mt-4 px-4 py-2 bg-primary dark:bg-darkPrimary text-white rounded hover:bg-cyan-600 dark:hover:bg-cyan-700 w-full"
-            >
-              Toggle Config
-            </button>
-            {showConfig && (
-              <SignalCombinationSelector
-                signalCombination={signalCombination}
-                setSignalCombination={setSignalCombination}
-              />
-            )}
-          </div>
-          {/* Subject Input and Confirmation */}
-          <div className="bg-white dark:bg-darkForeground shadow-card p-4 rounded-lg">
-            <div className="flex items-center space-x-4">
-              <input
-                type="text"
-                value={currentSubject}
-                onChange={(e) => setCurrentSubject(e.target.value)}
-                placeholder="Enter Subject ID"
-                className="flex-1 border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-neutral dark:bg-darkBackground text-gray-900 dark:text-gray-100"
-              />
-              <button
-                onClick={confirmUser}
-                className="bg-primary dark:bg-darkPrimary text-white px-4 py-2 rounded-md"
-                disabled={loading} // Disable when loading
-              >
-                {loading ? 'Loading...' : 'Confirm User'}
-              </button>
+          <div className="bg-white dark:bg-darkForeground shadow-card p-4 rounded-lg h-auto flex flex-col justify-between">
+            <div className="flex-1">
+              <CameraFeed videoRef={videoRef} canvasRef={canvasRef} />
             </div>
             <div className="mt-4">
-              {confirmedSubject && !loading && (
-                lastAccess ? (
-                  <div className="text-sm text-gray-700 dark:text-gray-300">
-                    <p><strong>Subject Id:</strong> {confirmedSubject}</p>
-                    <p><strong>Last Access:</strong> {lastAccess.toLocaleString()}</p>
-                    <p><strong>Avg Heart Rate:</strong> {historicalData.avgHeartRate} BPM</p>
-                    <p><strong>Avg HRV:</strong> {historicalData.avgHRV} ms</p>
-                  </div>
-                ) : (
-                  <p className="text-sm text-gray-500 dark:text-gray-400">No previous records found for Subject Id: {confirmedSubject}</p>
-                )
+              <button
+                onClick={() => setShowConfig((prev) => !prev)}
+                className="px-4 py-2 bg-primary dark:bg-darkPrimary text-white rounded hover:bg-cyan-600 dark:hover:bg-cyan-700 w-full"
+              >
+                Toggle Config
+              </button>
+              {showConfig && (
+                <SignalCombinationSelector
+                  signalCombination={signalCombination}
+                  setSignalCombination={setSignalCombination}
+                />
               )}
             </div>
           </div>
-        </div>
 
-        {/* Right Column: Chart and Save Data */}
-        <div className="space-y-6">
           {/* Chart with Save Data */}
-          <div className="bg-white dark:bg-darkForeground shadow-card p-4 rounded-lg">
-            <ChartComponent ppgData={ppgData} valleys={valleys} />
+          <div className="bg-white dark:bg-darkForeground shadow-card p-4 rounded-lg h-auto flex flex-col">
+            <div className="flex-1">
+              <ChartComponent ppgData={ppgData} valleys={valleys} />
+            </div>
             <button
               onClick={pushDataToMongo}
               className="mt-4 w-full px-4 py-2 bg-secondary dark:bg-darkSecondary text-white rounded hover:bg-green-600 dark:hover:bg-green-700"
@@ -294,23 +264,65 @@ export default function Home() {
               Save Data to MongoDB
             </button>
           </div>
+        </div>
+
+        {/* Bottom Row: Subject Input and Metrics Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+          {/* Subject Input and Confirmation */}
+          <div className="bg-white dark:bg-darkForeground shadow-card p-4 rounded-lg h-fit flex flex-col">
+            <div className="flex space-x-4">
+              <input
+                type="text"
+                value={currentSubject}
+                onChange={(e) => setCurrentSubject(e.target.value)}
+                placeholder="Enter Subject ID"
+                className="flex-1 border border-gray-300 dark:border-gray-600 rounded-md p-2 text-lg bg-neutral dark:bg-darkBackground text-gray-900 dark:text-gray-100"
+              />
+              <button
+                onClick={confirmUser}
+                className="bg-primary dark:bg-darkPrimary text-white px-4 py-2 rounded-md text-lg"
+                disabled={loading} // Disable when loading
+              >
+                {loading ? 'Loading...' : 'Confirm User'}
+              </button>
+            </div>
+            <div className="mt-4 flex-1 flex">
+              {loading ? (
+                <div className="text-gray-500 dark:text-gray-400 text-lg">Loading...</div>
+              ) : confirmedSubject && (
+                lastAccess ? (
+                  <div className="text-gray-700 dark:text-gray-300 text-lg">
+                    <p><strong>Subject Id:</strong> {confirmedSubject}</p>
+                    <p><strong>Last Access:</strong> {lastAccess.toLocaleString()}</p>
+                    <p><strong>Avg Heart Rate:</strong> {historicalData.avgHeartRate} BPM</p>
+                    <p><strong>Avg HRV:</strong> {historicalData.avgHRV} ms</p>
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-500 dark:text-gray-400 text-lg">No previous records found for Subject Id: {confirmedSubject}</p>
+                )
+              )}
+            </div>
+          </div>
+
           {/* Metrics Cards */}
-          <div className="bg-white dark:bg-darkForeground shadow-card p-4 rounded-lg grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <MetricsCard
-              title="HEART RATE"
-              value={heartRate || {}} // Pass the HeartRateResult object
-              confidence={heartRate?.confidence || 0}
-            />
-            <MetricsCard
-              title="HRV"
-              value={hrv || {}} // Pass the HRVResult object
-              confidence={hrv?.confidence || 0}
-            />
-            <MetricsCard
-              title="SIGNAL QUALITY"
-              value={signalQuality || '--'} // String value for signal quality
-              confidence={qualityConfidence || 0}
-            />
+          <div className="bg-white dark:bg-darkForeground shadow-card p-4 rounded-lg flex flex-col h-fit">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <MetricsCard
+                title="HEART RATE"
+                value={heartRate || {}} // Pass the HeartRateResult object
+                confidence={heartRate?.confidence || 0}
+              />
+              <MetricsCard
+                title="HRV"
+                value={hrv || {}} // Pass the HRVResult object
+                confidence={hrv?.confidence || 0}
+              />
+              <MetricsCard
+                title="SIGNAL QUALITY"
+                value={signalQuality || '--'} // String value for signal quality
+                confidence={qualityConfidence || 0}
+              />
+            </div>
           </div>
         </div>
       </div>
