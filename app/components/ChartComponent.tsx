@@ -54,41 +54,43 @@ export default function ChartComponent({
     ],
   };
 
+  const isDarkMode = typeof window !== 'undefined' && document.documentElement.classList.contains('dark');
+
   const chartOptions = {
     responsive: true,
     scales: {
       y: {
         beginAtZero: false,
         grid: {
-          color: document.documentElement.classList.contains('dark')
+          color: isDarkMode
             ? 'rgba(255, 255, 255, 0.1)' // Light grid lines for dark mode
             : 'rgba(0, 0, 0, 0.1)', // Dark grid lines for light mode
         },
         ticks: {
-          color: document.documentElement.classList.contains('dark')
+          color: isDarkMode
             ? 'rgba(255, 255, 255, 0.9)' // Light tick labels for dark mode
-            : 'rgba(0, 0, 0, 0.9)', // Dark tick labels for light mode
+            : 'rgba(0, 0, 0, 0.9)' // Dark tick labels for light mode
         },
       },
       x: {
         grid: {
-          color: document.documentElement.classList.contains('dark')
+          color: isDarkMode
             ? 'rgba(255, 255, 255, 0.1)' // Light grid lines for dark mode
             : 'rgba(0, 0, 0, 0.1)', // Dark grid lines for light mode
         },
         ticks: {
-          color: document.documentElement.classList.contains('dark')
+          color: isDarkMode
             ? 'rgba(255, 255, 255, 0.9)' // Light tick labels for dark mode
-            : 'rgba(0, 0, 0, 0.9)', // Dark tick labels for light mode
+            : 'rgba(0, 0, 0, 0.9)' // Dark tick labels for light mode
         },
       },
     },
     plugins: {
       legend: {
         labels: {
-          color: document.documentElement.classList.contains('dark')
+          color: isDarkMode
             ? 'rgba(255, 255, 255, 0.9)' // Light legend labels for dark mode
-            : 'rgba(0, 0, 0, 0.9)', // Dark legend labels for light mode
+            : 'rgba(0, 0, 0, 0.9)' // Dark legend labels for light mode
         },
       },
       title: {

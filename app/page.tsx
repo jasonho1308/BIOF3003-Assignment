@@ -194,6 +194,7 @@ export default function Home() {
         setConfirmedSubject(currentSubject.trim());
       } else {
         alert('Please enter a valid Subject ID.');
+        setIsLoading(false);
       }
     }
   };
