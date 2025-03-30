@@ -184,6 +184,7 @@ export default function Home() {
       <div className="flex flex-col items-center justify-center w-full max-w-5xl mb-6 bg-white dark:bg-darkForeground shadow-card p-6 rounded-lg space-y-6 md:space-y-0 md:flex-row md:justify-between">
         {/* Title with Icon */}
         <div className="flex items-center space-x-3">
+          <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
             <Image
               src="/favicon.ico"
               alt="HeartLen Icon"
@@ -191,13 +192,11 @@ export default function Home() {
               height={32}
               className="w-8 h-8"
             />
-            />
           </div>
           <h1 className="text-4xl font-bold text-primary dark:text-darkPrimary text-center md:text-left">
             Heart Lens
           </h1>
         </div>
-
         {/* Subject Input and Confirmation */}
         <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4 w-full md:w-auto">
           <input
