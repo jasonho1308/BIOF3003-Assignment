@@ -10,7 +10,7 @@ import useSignalQuality from './hooks/useSignalQuality';
 
 export default function Home() {
   const [isRecording, setIsRecording] = useState(false);
-  const [isSampling, setIsSampling] = useState(false); // New state for sampling
+  const [isSampling, setIsSampling] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [signalCombination, setSignalCombination] = useState('default');
   const [showConfig, setShowConfig] = useState(false);
@@ -18,7 +18,6 @@ export default function Home() {
   const [confirmedSubject, setConfirmedSubject] = useState('');
   const [isDarkMode, setIsDarkMode] = useState(false);
 
-  // Toggle dark mode
   const toggleDarkMode = () => {
     setIsDarkMode((prev) => !prev);
     if (document.documentElement.classList.contains('dark')) {
@@ -28,7 +27,6 @@ export default function Home() {
     }
   };
 
-  // Define refs for video and canvas
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -44,7 +42,6 @@ export default function Home() {
 
   const { signalQuality, qualityConfidence } = useSignalQuality(ppgData);
 
-  // Start or stop recording
   useEffect(() => {
     if (isRecording) {
       startCamera();
@@ -57,7 +54,7 @@ export default function Home() {
     let animationFrame: number;
     const processFrameLoop = () => {
       if (isRecording) {
-        processFrame(); // Call the frame processing function
+        processFrame();
         animationFrame = requestAnimationFrame(processFrameLoop);
       }
     };
@@ -65,18 +62,16 @@ export default function Home() {
       processFrameLoop();
     }
     return () => {
-      cancelAnimationFrame(animationFrame); // Clean up animation frame on unmount
+      cancelAnimationFrame(animationFrame);
     };
   }, [isRecording]);
 
-  // Get the last access time and historical data
   const [lastAccess, setLastAccess] = useState<Date | null>(null);
   const [historicalData, setHistoricalData] = useState({
     avgHeartRate: 0,
     avgHRV: 0,
   });
 
-  // Loading state for fetching last access
   const [loading, setIsLoading] = useState(false);
 
   const fetchLastAccess = async (subjectId: string) => {
@@ -90,7 +85,6 @@ export default function Home() {
             avgHeartRate: result.avgHeartRate || 0,
             avgHRV: result.avgHRV || 0,
           });
-
         } else if (result.error == 'No records found') {
           setLastAccess(null);
           setHistoricalData({
@@ -114,14 +108,13 @@ export default function Home() {
   };
 
   const pushDataToMongo = useCallback(async () => {
-    if (isUploading) return; // Prevent overlapping calls
+    if (isUploading) return;
 
-    setIsUploading(true); // Lock the function
+    setIsUploading(true);
     if (ppgData.length === 0) {
       console.warn('No PPG data to send to MongoDB');
       return;
     }
-    // Prepare the record data – adjust or add additional fields as needed
     const recordData = {
       subjectId: confirmedSubject || 'unknown',
       heartRate: {
@@ -138,7 +131,6 @@ export default function Home() {
 
     try {
       const payload = { ...recordData, subjectId: confirmedSubject || 'unknown' };
-      // Make a POST request to your backend endpoint that handles saving to MongoDB
       const response = await fetch('/api/save-record', {
         method: 'POST',
         headers: {
@@ -156,19 +148,17 @@ export default function Home() {
     } catch (error: any) {
       console.error('🚨 Network error - failed to save data:', error);
     } finally {
-      setIsUploading(false); // Unlock the function
+      setIsUploading(false);
     }
   }, [isUploading, ppgData, heartRate, hrv, confirmedSubject]);
 
-  // Automatically send data every 10 seconds
-  // Automatically send data every second when sampling is enabled
   useEffect(() => {
     let intervalId: NodeJS.Timeout | null = null;
 
     if (isSampling && ppgData.length > 0) {
       intervalId = setInterval(() => {
         pushDataToMongo();
-      }, 10000); // Send data every second
+      }, 10000);
     }
 
     return () => {
@@ -176,8 +166,6 @@ export default function Home() {
     };
   }, [isSampling, ppgData, pushDataToMongo]);
 
-
-  // Confirm User Function
   const confirmUser = () => {
     setIsLoading(true);
     const subjectId = currentSubject.trim();
@@ -194,9 +182,7 @@ export default function Home() {
     <div className="flex flex-col items-center p-6 bg-neutral dark:bg-darkBackground min-h-screen">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row items-center justify-between w-full max-w-5xl mb-6 bg-white dark:bg-darkForeground shadow-card p-4 rounded-lg">
-        {/* Title */}
         <h1 className="text-4xl font-bold text-primary dark:text-darkPrimary">HeartLen</h1>
-        {/* Subject Input and Confirmation */}
         <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4 mt-4 md:mt-0 w-full md:w-auto">
           <input
             type="text"
@@ -206,19 +192,17 @@ export default function Home() {
               setCurrentSubject(value);
             }}
             placeholder="Enter Subject ID"
-            className="w-48 border border-gray-300 dark:border-gray-600 rounded-md p-2 text-sm bg-neutral dark:bg-darkBackground text-gray-900 dark:text-gray-100 h-12" // Match height
+            className="w-48 border border-gray-300 dark:border-gray-600 rounded-md p-2 text-sm bg-neutral dark:bg-darkBackground text-gray-900 dark:text-gray-100 h-12"
           />
           <button
             onClick={confirmUser}
-            className="bg-primary dark:bg-darkPrimary text-white px-4 py-2 rounded-md text-lg h-12 flex items-center justify-center" // Ensure consistent height
-            disabled={loading} // Disable when loading
+            className="bg-primary dark:bg-darkPrimary text-white px-4 py-2 rounded-md text-lg h-12 flex items-center justify-center"
+            disabled={loading}
           >
             {loading ? 'Loading...' : 'Confirm User'}
           </button>
         </div>
-        {/* Buttons */}
         <div className="flex space-x-4 mt-4 md:mt-0">
-          {/* Recording Button */}
           <button
             onClick={() => setIsRecording(!isRecording)}
             className={`p-3 rounded-lg text-sm transition-all duration-300 ${isRecording
@@ -232,12 +216,12 @@ export default function Home() {
       </div>
 
       {/* Main Grid: Camera, Chart, and Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-5xl">
-        {/* Left Column: Camera Feed and Last Access */}
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 w-full max-w-5xl">
+        {/* Left Column: Camera Feed and Real-Time Metrics */}
         <div className="flex flex-col gap-6">
           {/* Camera Feed */}
-          <div className="bg-white dark:bg-darkForeground shadow-card p-4 rounded-lg h-auto flex flex-col justify-between">
-            <div className="flex-1">
+          <div className="bg-white dark:bg-darkForeground shadow-card p-4 rounded-lg">
+            <div className="h-[200px] md:h-[300px] overflow-hidden">
               <CameraFeed videoRef={videoRef} canvasRef={canvasRef} />
             </div>
             <div className="mt-4">
@@ -256,29 +240,32 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Last Access and Historical Data */}
-          <div className="bg-white dark:bg-darkForeground shadow-card p-4 rounded-lg h-auto">
-            {loading ? (
-              <div className="text-gray-500 dark:text-gray-400 text-lg items-center">Loading...</div>
-            ) : confirmedSubject && (
-              lastAccess ? (
-                <div className="text-gray-700 dark:text-gray-300 text-lg">
-                  <p><strong>Subject Id:</strong> {confirmedSubject}</p>
-                  <p><strong>Last Access:</strong> {lastAccess.toLocaleString()}</p>
-                  <p><strong>Avg Heart Rate:</strong> {historicalData.avgHeartRate} BPM</p>
-                  <p><strong>Avg HRV:</strong> {historicalData.avgHRV} ms</p>
-                </div>
-              ) : (
-                <p className="text-sm text-gray-500 dark:text-gray-400 text-lg">No previous records found for Subject Id: {confirmedSubject}</p>
-              )
-            )}
+          {/* Real-Time Metrics */}
+          <div className="bg-white dark:bg-darkForeground shadow-card p-4 rounded-lg">
+            <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-2 gap-4">
+              <MetricsCard
+                title="HEART RATE"
+                value={heartRate || {}}
+                confidence={heartRate?.confidence || 0}
+              />
+              <MetricsCard
+                title="HRV"
+                value={hrv || {}}
+                confidence={hrv?.confidence || 0}
+              />
+              <MetricsCard
+                title="SIGNAL QUALITY"
+                value={signalQuality || '--'}
+                confidence={qualityConfidence || 0}
+              />
+            </div>
           </div>
         </div>
 
-        {/* Right Column: Chart and Real-Time Metrics */}
+        {/* Right Column: Chart and Past Data */}
         <div className="flex flex-col gap-6">
           {/* Chart */}
-          <div className="bg-white dark:bg-darkForeground shadow-card p-4 rounded-lg h-auto">
+          <div className="bg-white dark:bg-darkForeground shadow-card p-4 rounded-lg">
             <ChartComponent ppgData={ppgData} valleys={valleys} />
             <button
               onClick={pushDataToMongo}
@@ -288,25 +275,24 @@ export default function Home() {
             </button>
           </div>
 
-          {/* Real-Time Metrics */}
-          <div className="bg-white dark:bg-darkForeground shadow-card p-4 rounded-lg flex flex-col h-auto">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <MetricsCard
-                title="HEART RATE"
-                value={heartRate || {}} // Pass the HeartRateResult object
-                confidence={heartRate?.confidence || 0}
-              />
-              <MetricsCard
-                title="HRV"
-                value={hrv || {}} // Pass the HRVResult object
-                confidence={hrv?.confidence || 0}
-              />
-              <MetricsCard
-                title="SIGNAL QUALITY"
-                value={signalQuality || '--'} // String value for signal quality
-                confidence={qualityConfidence || 0}
-              />
-            </div>
+          {/* Past Data */}
+          <div className="bg-white dark:bg-darkForeground shadow-card p-4 rounded-lg">
+            {loading ? (
+              <div className="text-gray-500 dark:text-gray-400 text-lg items-center">Loading...</div>
+            ) : confirmedSubject && lastAccess ? (
+              <div className="text-gray-700 dark:text-gray-300 text-lg">
+                <p><strong>Subject Id:</strong> {confirmedSubject}</p>
+                <p><strong>Last Access:</strong> {lastAccess.toLocaleString()}</p>
+                <p><strong>Avg Heart Rate:</strong> {historicalData.avgHeartRate} BPM</p>
+                <p><strong>Avg HRV:</strong> {historicalData.avgHRV} ms</p>
+              </div>
+            ) : (
+              confirmedSubject && (
+                <p className="text-sm text-gray-500 dark:text-gray-400 text-lg">
+                  No previous records found for Subject Id: {confirmedSubject}
+                </p>
+              )
+            )}
           </div>
         </div>
       </div>
