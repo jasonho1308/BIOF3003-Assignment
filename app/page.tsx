@@ -182,10 +182,19 @@ export default function Home() {
     <div className="flex flex-col items-center p-6 bg-neutral dark:bg-darkBackground min-h-screen">
       {/* Header Section */}
       <div className="flex flex-col items-center justify-center w-full max-w-5xl mb-6 bg-white dark:bg-darkForeground shadow-card p-6 rounded-lg space-y-6 md:space-y-0 md:flex-row md:justify-between">
-        {/* Title */}
-        <h1 className="text-4xl font-bold text-primary dark:text-darkPrimary text-center md:text-left">
-          HeartLen
-        </h1>
+        {/* Title with Icon */}
+        <div className="flex items-center space-x-3">
+          <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center border-2 border-primary dark:border-darkPrimary">
+            <img
+              src="/favicon.ico" // Use favicon.ico as the icon
+              alt="HeartLen Icon"
+              className="w-8 h-8"
+            />
+          </div>
+          <h1 className="text-4xl font-bold text-primary dark:text-darkPrimary text-center md:text-left">
+            Heart Lens
+          </h1>
+        </div>
 
         {/* Subject Input and Confirmation */}
         <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4 w-full md:w-auto">
