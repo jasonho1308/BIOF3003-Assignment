@@ -181,9 +181,14 @@ export default function Home() {
   return (
     <div className="flex flex-col items-center p-6 bg-neutral dark:bg-darkBackground min-h-screen">
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row items-center justify-between w-full max-w-5xl mb-6 bg-white dark:bg-darkForeground shadow-card p-4 rounded-lg">
-        <h1 className="text-4xl font-bold text-primary dark:text-darkPrimary">HeartLen</h1>
-        <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4 mt-4 md:mt-0 w-full md:w-auto">
+      <div className="flex flex-col items-center justify-center w-full max-w-5xl mb-6 bg-white dark:bg-darkForeground shadow-card p-6 rounded-lg space-y-6 md:space-y-0 md:flex-row md:justify-between">
+        {/* Title */}
+        <h1 className="text-4xl font-bold text-primary dark:text-darkPrimary text-center md:text-left">
+          HeartLen
+        </h1>
+
+        {/* Subject Input and Confirmation */}
+        <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4 w-full md:w-auto">
           <input
             type="text"
             value={currentSubject}
@@ -192,20 +197,22 @@ export default function Home() {
               setCurrentSubject(value);
             }}
             placeholder="Enter Subject ID"
-            className="w-48 border border-gray-300 dark:border-gray-600 rounded-md p-2 text-sm bg-neutral dark:bg-darkBackground text-gray-900 dark:text-gray-100 h-12"
+            className="w-full md:w-48 border border-gray-300 dark:border-gray-600 rounded-md p-2 text-sm bg-neutral dark:bg-darkBackground text-gray-900 dark:text-gray-100 h-12"
           />
           <button
             onClick={confirmUser}
-            className="bg-primary dark:bg-darkPrimary text-white px-4 py-2 rounded-md text-lg h-12 flex items-center justify-center"
+            className="bg-primary dark:bg-darkPrimary text-white px-4 py-2 rounded-md text-lg h-12 flex items-center justify-center w-full md:w-auto"
             disabled={loading}
           >
             {loading ? 'Loading...' : 'Confirm User'}
           </button>
         </div>
-        <div className="flex space-x-4 mt-4 md:mt-0">
+
+        {/* Recording Button */}
+        <div className="flex justify-center md:justify-end w-full md:w-auto">
           <button
             onClick={() => setIsRecording(!isRecording)}
-            className={`p-3 rounded-lg text-sm transition-all duration-300 ${isRecording
+            className={`p-3 rounded-lg text-sm transition-all duration-300 w-full md:w-auto ${isRecording
               ? 'bg-danger dark:bg-darkDanger hover:bg-red-600 dark:hover:bg-red-700 text-white'
               : 'bg-primary dark:bg-darkPrimary hover:bg-cyan-600 dark:hover:bg-cyan-700 text-white'
               }`}
