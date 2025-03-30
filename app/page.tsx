@@ -69,11 +69,6 @@ export default function Home() {
     };
   }, [isRecording]);
 
-  // Log signal quality updates
-  useEffect(() => {
-    console.log('Updated signal quality:', signalQuality, 'Confidence:', qualityConfidence);
-  }, [signalQuality, qualityConfidence]);
-
   // Get the last access time and historical data
   const [lastAccess, setLastAccess] = useState<Date | null>(null);
   const [historicalData, setHistoricalData] = useState({
@@ -84,11 +79,10 @@ export default function Home() {
   // Loading state for fetching last access
   const [loading, setIsLoading] = useState(false);
 
-
-  const fetchLastAccess = async () => {
-    if (confirmedSubject) {
+  const fetchLastAccess = async (subjectId: string) => {
+    if (subjectId) {
       try {
-        const response = await fetch(`/api/last-access?subjectId=${confirmedSubject}`);
+        const response = await fetch(`/api/last-access?subjectId=${subjectId}`);
         const result = await response.json();
         if (result.success) {
           setLastAccess(new Date(result.lastAccess));
@@ -183,22 +177,17 @@ export default function Home() {
   }, [isSampling, ppgData, pushDataToMongo]);
 
 
-  useEffect(() => {
-    fetchLastAccess();
-    return;
-  }, [confirmedSubject]);
-
-
   // Confirm User Function
   const confirmUser = () => {
-    setIsLoading(true)
-    if (currentSubject.trim()) {
-      setConfirmedSubject(currentSubject.trim());
+    setIsLoading(true);
+    const subjectId = currentSubject.trim();
+    if (subjectId) {
+      setConfirmedSubject(subjectId);
+      fetchLastAccess(subjectId);
     } else {
       alert('Please enter a valid Subject ID.');
       setIsLoading(false);
     }
-
   };
 
   return (
@@ -207,6 +196,26 @@ export default function Home() {
       <div className="flex flex-col md:flex-row items-center justify-between w-full max-w-5xl mb-6 bg-white dark:bg-darkForeground shadow-card p-4 rounded-lg">
         {/* Title */}
         <h1 className="text-4xl font-bold text-primary dark:text-darkPrimary">HeartLen</h1>
+        {/* Subject Input and Confirmation */}
+        <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4 mt-4 md:mt-0 w-full md:w-auto">
+          <input
+            type="text"
+            value={currentSubject}
+            onChange={(e) => {
+              const value = e.target.value;
+              setCurrentSubject(value);
+            }}
+            placeholder="Enter Subject ID"
+            className="w-48 border border-gray-300 dark:border-gray-600 rounded-md p-2 text-sm bg-neutral dark:bg-darkBackground text-gray-900 dark:text-gray-100 h-12" // Match height
+          />
+          <button
+            onClick={confirmUser}
+            className="bg-primary dark:bg-darkPrimary text-white px-4 py-2 rounded-md text-lg h-12 flex items-center justify-center" // Ensure consistent height
+            disabled={loading} // Disable when loading
+          >
+            {loading ? 'Loading...' : 'Confirm User'}
+          </button>
+        </div>
         {/* Buttons */}
         <div className="flex space-x-4 mt-4 md:mt-0">
           {/* Recording Button */}
@@ -219,25 +228,14 @@ export default function Home() {
           >
             {isRecording ? '⏹ STOP' : '⏺ START'} RECORDING
           </button>
-          {/* Sampling Button */}
-          <button
-            onClick={() => setIsSampling(!isSampling)}
-            className={`p-3 rounded-lg text-sm transition-all duration-300 ${isSampling
-              ? 'bg-secondary dark:bg-darkSecondary hover:bg-green-600 dark:hover:bg-green-700 text-white'
-              : 'bg-gray-500 dark:bg-gray-600 hover:bg-gray-600 dark:hover:bg-gray-700 text-white'
-              }`}
-            disabled={!isRecording} // Enable only when recording is active
-          >
-            {isSampling ? '⏹ STOP SAMPLING' : '⏺ START SAMPLING'}
-          </button>
         </div>
       </div>
 
-      {/* Main Grid: Camera and Chart Side by Side */}
-      <div className="grid grid-rows-2 gap-6 w-full max-w-5xl">
-        {/* Top Row: Camera Feed and Chart */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Camera Feed with Toggle Config */}
+      {/* Main Grid: Camera, Chart, and Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-5xl">
+        {/* Left Column: Camera Feed and Last Access */}
+        <div className="flex flex-col gap-6">
+          {/* Camera Feed */}
           <div className="bg-white dark:bg-darkForeground shadow-card p-4 rounded-lg h-auto flex flex-col justify-between">
             <div className="flex-1">
               <CameraFeed videoRef={videoRef} canvasRef={canvasRef} />
@@ -258,11 +256,30 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Chart with Save Data */}
-          <div className="bg-white dark:bg-darkForeground shadow-card p-4 rounded-lg h-auto flex flex-col">
-            <div className="flex-1">
-              <ChartComponent ppgData={ppgData} valleys={valleys} />
-            </div>
+          {/* Last Access and Historical Data */}
+          <div className="bg-white dark:bg-darkForeground shadow-card p-4 rounded-lg h-auto">
+            {loading ? (
+              <div className="text-gray-500 dark:text-gray-400 text-lg items-center">Loading...</div>
+            ) : confirmedSubject && (
+              lastAccess ? (
+                <div className="text-gray-700 dark:text-gray-300 text-lg">
+                  <p><strong>Subject Id:</strong> {confirmedSubject}</p>
+                  <p><strong>Last Access:</strong> {lastAccess.toLocaleString()}</p>
+                  <p><strong>Avg Heart Rate:</strong> {historicalData.avgHeartRate} BPM</p>
+                  <p><strong>Avg HRV:</strong> {historicalData.avgHRV} ms</p>
+                </div>
+              ) : (
+                <p className="text-sm text-gray-500 dark:text-gray-400 text-lg">No previous records found for Subject Id: {confirmedSubject}</p>
+              )
+            )}
+          </div>
+        </div>
+
+        {/* Right Column: Chart and Real-Time Metrics */}
+        <div className="flex flex-col gap-6">
+          {/* Chart */}
+          <div className="bg-white dark:bg-darkForeground shadow-card p-4 rounded-lg h-auto">
+            <ChartComponent ppgData={ppgData} valleys={valleys} />
             <button
               onClick={pushDataToMongo}
               className="mt-4 w-full px-4 py-2 bg-secondary dark:bg-darkSecondary text-white rounded hover:bg-green-600 dark:hover:bg-green-700"
@@ -270,48 +287,9 @@ export default function Home() {
               Save Data to MongoDB
             </button>
           </div>
-        </div>
 
-        {/* Bottom Row: Subject Input and Metrics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-          {/* Subject Input and Confirmation */}
-          <div className="bg-white dark:bg-darkForeground shadow-card p-4 rounded-lg h-fit flex flex-col">
-            <div className="flex space-x-4">
-              <input
-                type="text"
-                value={currentSubject}
-                onChange={(e) => setCurrentSubject(e.target.value)}
-                placeholder="Enter Subject ID"
-                className="flex-1 border border-gray-300 dark:border-gray-600 rounded-md p-2 text-lg bg-neutral dark:bg-darkBackground text-gray-900 dark:text-gray-100"
-              />
-              <button
-                onClick={confirmUser}
-                className="bg-primary dark:bg-darkPrimary text-white px-4 py-2 rounded-md text-lg"
-                disabled={loading} // Disable when loading
-              >
-                {loading ? 'Loading...' : 'Confirm User'}
-              </button>
-            </div>
-            <div className="mt-4 flex-1 flex">
-              {loading ? (
-                <div className="text-gray-500 dark:text-gray-400 text-lg items-center">Loading...</div>
-              ) : confirmedSubject && (
-                lastAccess ? (
-                  <div className="text-gray-700 dark:text-gray-300 text-lg">
-                    <p><strong>Subject Id:</strong> {confirmedSubject}</p>
-                    <p><strong>Last Access:</strong> {lastAccess.toLocaleString()}</p>
-                    <p><strong>Avg Heart Rate:</strong> {historicalData.avgHeartRate} BPM</p>
-                    <p><strong>Avg HRV:</strong> {historicalData.avgHRV} ms</p>
-                  </div>
-                ) : (
-                  <p className="text-sm text-gray-500 dark:text-gray-400 text-lg">No previous records found for Subject Id: {confirmedSubject}</p>
-                )
-              )}
-            </div>
-          </div>
-
-          {/* Metrics Cards */}
-          <div className="bg-white dark:bg-darkForeground shadow-card p-4 rounded-lg flex flex-col h-fit">
+          {/* Real-Time Metrics */}
+          <div className="bg-white dark:bg-darkForeground shadow-card p-4 rounded-lg flex flex-col h-auto">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <MetricsCard
                 title="HEART RATE"
