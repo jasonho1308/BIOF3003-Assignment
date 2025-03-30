@@ -1,6 +1,7 @@
 // app/page.tsx
 'use client';
 import { useState, useRef, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import CameraFeed from './components/CameraFeed';
 import MetricsCard from './components/MetricsCard';
 import SignalCombinationSelector from './components/SignalCombinationSelector';
@@ -154,7 +155,7 @@ export default function Home() {
   useEffect(() => {
     let intervalId: NodeJS.Timeout | null = null;
 
-    if (isSampling && ppgData.length > 0) {
+    if (ppgData.length > 0) {
       intervalId = setInterval(() => {
         pushDataToMongo();
       }, 10000);
@@ -163,7 +164,7 @@ export default function Home() {
     return () => {
       if (intervalId) clearInterval(intervalId);
     };
-  }, [isSampling, ppgData, pushDataToMongo]);
+  }, [ppgData, pushDataToMongo]);
 
   const confirmUser = () => {
     setIsLoading(true);
@@ -183,11 +184,13 @@ export default function Home() {
       <div className="flex flex-col items-center justify-center w-full max-w-5xl mb-6 bg-white dark:bg-darkForeground shadow-card p-6 rounded-lg space-y-6 md:space-y-0 md:flex-row md:justify-between">
         {/* Title with Icon */}
         <div className="flex items-center space-x-3">
-          <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center border-2 border-primary dark:border-darkPrimary">
-            <img
-              src="/favicon.ico" // Use favicon.ico as the icon
+            <Image
+              src="/favicon.ico"
               alt="HeartLen Icon"
+              width={32}
+              height={32}
               className="w-8 h-8"
+            />
             />
           </div>
           <h1 className="text-4xl font-bold text-primary dark:text-darkPrimary text-center md:text-left">
