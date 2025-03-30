@@ -10,7 +10,6 @@ import useSignalQuality from './hooks/useSignalQuality';
 
 export default function Home() {
   const [isRecording, setIsRecording] = useState(false);
-  const [isSampling, setIsSampling] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [signalCombination, setSignalCombination] = useState('default');
   const [showConfig, setShowConfig] = useState(false);
