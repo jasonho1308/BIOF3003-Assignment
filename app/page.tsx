@@ -81,9 +81,11 @@ export default function Home() {
         const result = await response.json();
         if (result.success) {
           setLastAccess(new Date(result.lastAccess));
+          const historialData = await fetch(`/api/save-record?subjectId=${subjectId}`);
+          const historicalResult = await historialData.json();
           setHistoricalData({
-            avgHeartRate: result.avgHeartRate || 0,
-            avgHRV: result.avgHRV || 0,
+            avgHeartRate: historicalResult.avgHeartRate || 0,
+            avgHRV: historicalResult.avgHRV || 0,
           });
         } else if (result.error == 'No records found') {
           setLastAccess(null);
