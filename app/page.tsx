@@ -69,6 +69,11 @@ export default function Home() {
     };
   }, [isRecording]);
 
+  // Log signal quality updates
+  useEffect(() => {
+    console.log('Updated signal quality:', signalQuality, 'Confidence:', qualityConfidence);
+  }, [signalQuality, qualityConfidence]);
+
   // Get the last access time and historical data
   const [lastAccess, setLastAccess] = useState<Date | null>(null);
   const [historicalData, setHistoricalData] = useState({
@@ -187,16 +192,13 @@ export default function Home() {
   // Confirm User Function
   const confirmUser = () => {
     setIsLoading(true)
-    if (currentSubject.trim() == confirmedSubject) {
-      setIsLoading(false);
+    if (currentSubject.trim()) {
+      setConfirmedSubject(currentSubject.trim());
     } else {
-      if (currentSubject.trim()) {
-        setConfirmedSubject(currentSubject.trim());
-      } else {
-        alert('Please enter a valid Subject ID.');
-        setIsLoading(false);
-      }
+      alert('Please enter a valid Subject ID.');
+      setIsLoading(false);
     }
+
   };
 
   return (

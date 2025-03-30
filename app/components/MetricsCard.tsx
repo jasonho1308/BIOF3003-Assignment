@@ -15,17 +15,19 @@ export default function MetricsCard({
     <div className="bg-gray-200 dark:bg-gray-900 p-4 rounded-lg shadow-card flex-1 min-w-[150px]">
       <p className="text-gray-700 dark:text-gray-400">{title}</p>
       <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-        {typeof value === 'number' && value > 0
+        {typeof value === 'number'
           ? `${value} ${unit || ''}` // Display numeric values with optional units
-          : typeof value === 'object' && value !== null
-            ? value.bpm !== undefined
-              ? `${value.bpm} BPM` // Handle HeartRateResult
-              : value.sdnn !== undefined
-                ? isNaN(value.sdnn)
-                  ? '--' // Handle NaN for HRV
-                  : `${value.sdnn} ms` // Handle HRVResult
-                : '--'
-            : '--'}{' '}
+          : typeof value === 'string'
+            ? value // Display string values directly
+            : typeof value === 'object' && value !== null
+              ? value.bpm !== undefined
+                ? `${value.bpm} BPM` // Handle HeartRateResult
+                : value.sdnn !== undefined
+                  ? isNaN(value.sdnn)
+                    ? '--' // Handle NaN for HRV
+                    : `${value.sdnn} ms` // Handle HRVResult
+                  : '--'
+              : '--'}{' '}
         {/* Fallback for undefined or invalid values */}
       </h2>
       {confidence !== undefined && (
