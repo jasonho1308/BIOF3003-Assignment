@@ -39,7 +39,7 @@ const PastData: React.FC<PastDataProps> = ({ loading, confirmedSubject, lastAcce
                         </div>
                     </div>
                 ) : (
-                    <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                    <div className="flex items-center text-gray-500 dark:text-gray-400">
                         <FaExclamationCircle className="mr-2 text-yellow-500" />
                         No previous records found for Subject Id: {confirmedSubject}
                     </div>
