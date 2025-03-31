@@ -4,8 +4,6 @@
 
 HeartLen is a web-based tool designed to process photoplethysmography (PPG) signals captured via a webcam. It calculates key health metrics such as heart rate, heart rate variability (HRV), and signal quality using machine learning models. The processed data can be saved to a MongoDB database for further analysis.
 
----
-
 ## Features
 
 - **Real-time PPG Signal Processing**: Extracts and processes PPG signals using webcam input.
@@ -14,8 +12,6 @@ HeartLen is a web-based tool designed to process photoplethysmography (PPG) sign
 - **Data Storage**: Saves processed data into a MongoDB database for future access.
 - **Interactive Visualization**: Displays real-time metrics and charts to provide user feedback.
 
----
-
 ## Prerequisites
 
 Before running the app, ensure that you have the following:
@@ -23,7 +19,6 @@ Before running the app, ensure that you have the following:
 - **Node.js** (v18 or higher)
 - **MongoDB Atlas Account** (or a local MongoDB instance)
 
----
 
 ## Installation & Setup
 
@@ -66,8 +61,6 @@ Then, open your browser and visit:
 http://localhost:3000
 ```
 
----
-
 ## Connecting to MongoDB
 
 To link the app to your MongoDB instance:
@@ -76,7 +69,6 @@ To link the app to your MongoDB instance:
 2. Copy the connection string from MongoDB Atlas and paste it into the `.env.local` file as shown above.
 3. Ensure your database has a collection named `records` to store PPG data.
 
----
 
 ## Deployment
 
@@ -89,8 +81,6 @@ To deploy the app:
    ```
 
 2. Deploy the generated `build` folder to your preferred hosting service (e.g., Vercel, Netlify, AWS).
-
----
 
 ## Repository Structure
 
@@ -120,7 +110,6 @@ The project follows a modular structure to ensure maintainability and readabilit
 └── tsconfig.json          # TypeScript configuration
 ```
 
----
 
 ## Code Quality
 
@@ -128,13 +117,10 @@ The project follows a modular structure to ensure maintainability and readabilit
 - Use meaningful variable names and modularize your logic into reusable components and hooks.
 - Follow best practices for React and backend development.
 
----
-
 ## License
 
 This project is licensed under the **MIT License**.
 
----
 
 ## Contributions
 
@@ -144,7 +130,6 @@ Contributions are welcome! If you'd like to contribute:
 2. Create a new branch for your feature or bugfix.
 3. Submit a pull request for review.
 
----
 
 ## Author
 
