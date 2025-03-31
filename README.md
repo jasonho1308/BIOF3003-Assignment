@@ -1,6 +1,6 @@
-![](https://github.com/user-attachments/assets/44589cce-815d-48da-8684-f966a9af28ce)
-
 # Heart Lens App
+
+![](https://github.com/user-attachments/assets/44589cce-815d-48da-8684-f966a9af28ce)
 
 HeartLen is a web-based tool designed to process photoplethysmography (PPG) signals captured via a webcam. It calculates key health metrics such as heart rate, heart rate variability (HRV), and signal quality using machine learning models. The processed data can be saved to a MongoDB database for further analysis.
 
@@ -18,7 +18,6 @@ Before running the app, ensure that you have the following:
 
 - **Node.js** (v18 or higher)
 - **MongoDB Atlas Account** (or a local MongoDB instance)
-
 
 ## Installation & Setup
 
@@ -69,7 +68,6 @@ To link the app to your MongoDB instance:
 2. Copy the connection string from MongoDB Atlas and paste it into the `.env.local` file as shown above.
 3. Ensure your database has a collection named `records` to store PPG data.
 
-
 ## Deployment
 
 To deploy the app:
@@ -110,7 +108,6 @@ The project follows a modular structure to ensure maintainability and readabilit
 └── tsconfig.json          # TypeScript configuration
 ```
 
-
 ## Code Quality
 
 - Ensure your code is clean and well-commented.
@@ -121,7 +118,6 @@ The project follows a modular structure to ensure maintainability and readabilit
 
 This project is licensed under the **MIT License**.
 
-
 ## Contributions
 
 Contributions are welcome! If you'd like to contribute:
@@ -129,7 +125,6 @@ Contributions are welcome! If you'd like to contribute:
 1. Fork the repository.
 2. Create a new branch for your feature or bugfix.
 3. Submit a pull request for review.
-
 
 ## Author
 
