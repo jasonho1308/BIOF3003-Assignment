@@ -173,8 +173,13 @@ export default function Home() {
     setIsLoading(true);
     const subjectId = currentSubject.trim();
     if (subjectId) {
-      setConfirmedSubject(subjectId);
-      fetchLastAccess(subjectId);
+      if (subjectId === confirmedSubject) {
+        // Refresh data if the subjectId didn't change
+        fetchLastAccess(subjectId);
+      } else {
+        setConfirmedSubject(subjectId);
+        fetchLastAccess(subjectId);
+      }
     } else {
       alert('Please enter a valid Subject ID.');
       setIsLoading(false);
@@ -219,7 +224,7 @@ export default function Home() {
             className="bg-primary dark:bg-darkPrimary text-white px-4 py-2 rounded-md text-lg h-12 flex items-center justify-center w-full md:w-auto"
             disabled={loading}
           >
-            {loading ? 'Loading...' : 'Confirm User'}
+            {loading ? 'Loading...' : currentSubject && currentSubject.trim() === confirmedSubject ? 'Refresh' : 'Confirm User'}
           </button>
         </div>
 
