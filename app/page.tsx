@@ -9,6 +9,7 @@ import ChartComponent from './components/ChartComponent';
 import PastData from './components/PastData';
 import usePPGProcessing from './hooks/usePPGProcessing';
 import useSignalQuality from './hooks/useSignalQuality';
+import DarkModeToggle from './components/DarkModeToggle';
 
 export default function Home() {
   const [isRecording, setIsRecording] = useState(false);
@@ -17,16 +18,7 @@ export default function Home() {
   const [showConfig, setShowConfig] = useState(false);
   const [currentSubject, setCurrentSubject] = useState('');
   const [confirmedSubject, setConfirmedSubject] = useState('');
-  const [isDarkMode, setIsDarkMode] = useState(false);
-
-  const toggleDarkMode = () => {
-    setIsDarkMode((prev) => !prev);
-    if (document.documentElement.classList.contains('dark')) {
-      document.documentElement.classList.remove('dark');
-    } else {
-      document.documentElement.classList.add('dark');
-    }
-  };
+  const [loading, setIsLoading] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -72,8 +64,6 @@ export default function Home() {
     avgHeartRate: 0,
     avgHRV: 0,
   });
-
-  const [loading, setIsLoading] = useState(false);
 
   const fetchLastAccess = async (subjectId: string) => {
     if (subjectId) {
@@ -207,15 +197,13 @@ export default function Home() {
             Heart Lens
           </h1>
         </div>
-        {/* Subject Input and Confirmation */}
+
+        {/* Subject Input */}
         <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4 w-full md:w-auto">
           <input
             type="text"
             value={currentSubject}
-            onChange={(e) => {
-              const value = e.target.value;
-              setCurrentSubject(value);
-            }}
+            onChange={(e) => setCurrentSubject(e.target.value)}
             placeholder="Enter Subject ID"
             className="w-full md:w-48 border border-gray-300 dark:border-gray-600 rounded-md p-2 text-sm bg-neutral dark:bg-darkBackground text-gray-900 dark:text-gray-100 h-12"
           />
@@ -224,7 +212,11 @@ export default function Home() {
             className="bg-primary dark:bg-darkPrimary text-white px-4 py-2 rounded-md text-lg h-12 flex items-center justify-center w-full md:w-auto"
             disabled={loading}
           >
-            {loading ? 'Loading...' : currentSubject && currentSubject.trim() === confirmedSubject ? 'Refresh' : 'Confirm User'}
+            {loading
+              ? 'Loading...'
+              : currentSubject && currentSubject.trim() === confirmedSubject
+                ? 'Refresh'
+                : 'Confirm User'}
           </button>
         </div>
 
@@ -233,8 +225,8 @@ export default function Home() {
           <button
             onClick={() => setIsRecording(!isRecording)}
             className={`p-3 rounded-lg text-sm transition-all duration-300 w-full md:w-auto ${isRecording
-              ? 'bg-danger dark:bg-darkDanger hover:bg-red-600 dark:hover:bg-red-700 text-white'
-              : 'bg-primary dark:bg-darkPrimary hover:bg-cyan-600 dark:hover:bg-cyan-700 text-white'
+                ? 'bg-danger dark:bg-darkDanger hover:bg-red-600 dark:hover:bg-red-700 text-white'
+                : 'bg-primary dark:bg-darkPrimary hover:bg-cyan-600 dark:hover:bg-cyan-700 text-white'
               }`}
           >
             {isRecording ? '⏹ STOP' : '⏺ START'} RECORDING
@@ -313,12 +305,7 @@ export default function Home() {
       </div>
 
       {/* Floating Dark Mode Toggle Button */}
-      <button
-        onClick={toggleDarkMode}
-        className="fixed bottom-4 right-4 p-3 rounded-full bg-gray-300 dark:bg-gray-700 text-gray-900 dark:text-gray-100 hover:bg-gray-400 dark:hover:bg-gray-600 shadow-lg transition-all duration-300"
-      >
-        {isDarkMode ? '☀️' : '🌙'}
-      </button>
+      <DarkModeToggle />
     </div>
   );
 }
