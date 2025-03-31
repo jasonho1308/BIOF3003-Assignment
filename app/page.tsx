@@ -6,6 +6,7 @@ import CameraFeed from './components/CameraFeed';
 import MetricsCard from './components/MetricsCard';
 import SignalCombinationSelector from './components/SignalCombinationSelector';
 import ChartComponent from './components/ChartComponent';
+import PastData from './components/PastData';
 import usePPGProcessing from './hooks/usePPGProcessing';
 import useSignalQuality from './hooks/useSignalQuality';
 
@@ -186,14 +187,16 @@ export default function Home() {
       <div className="flex flex-col items-center justify-center w-full max-w-5xl mb-6 bg-white dark:bg-darkForeground shadow-card p-6 rounded-lg space-y-6 md:space-y-0 md:flex-row md:justify-between">
         {/* Title with Icon */}
         <div className="flex items-center space-x-3">
-          <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
-            <Image
-              src="/favicon.ico"
-              alt="HeartLen Icon"
-              width={32}
-              height={32}
-              className="w-8 h-8"
-            />
+          <div className="w-14 h-14 bg-primary dark:bg-darkPrimary rounded-full flex items-center justify-center border-4 border-primary dark:border-darkPrimary">
+            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
+              <Image
+                src="/favicon.ico"
+                alt="Heart Lens Icon"
+                width={32}
+                height={32}
+                className="w-8 h-8"
+              />
+            </div>
           </div>
           <h1 className="text-4xl font-bold text-primary dark:text-darkPrimary text-center md:text-left">
             Heart Lens
@@ -295,24 +298,12 @@ export default function Home() {
           </div>
 
           {/* Past Data */}
-          <div className="bg-white dark:bg-darkForeground shadow-card p-4 rounded-lg">
-            {loading ? (
-              <div className="text-gray-500 dark:text-gray-400 text-lg items-center">Loading...</div>
-            ) : confirmedSubject && lastAccess ? (
-              <div className="text-gray-700 dark:text-gray-300 text-lg">
-                <p><strong>Subject Id:</strong> {confirmedSubject}</p>
-                <p><strong>Last Access:</strong> {lastAccess.toLocaleString()}</p>
-                <p><strong>Avg Heart Rate:</strong> {historicalData.avgHeartRate} BPM</p>
-                <p><strong>Avg HRV:</strong> {historicalData.avgHRV} ms</p>
-              </div>
-            ) : (
-              confirmedSubject && (
-                <p className="text-sm text-gray-500 dark:text-gray-400 text-lg">
-                  No previous records found for Subject Id: {confirmedSubject}
-                </p>
-              )
-            )}
-          </div>
+          <PastData
+            loading={loading}
+            confirmedSubject={confirmedSubject}
+            lastAccess={lastAccess}
+            historicalData={historicalData}
+          />
         </div>
       </div>
 
