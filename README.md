@@ -1,4 +1,6 @@
-# HeartLen App
+![](https://github.com/user-attachments/assets/44589cce-815d-48da-8684-f966a9af28ce)
+
+# Heart Lens App
 
 HeartLen is a web-based tool designed to process photoplethysmography (PPG) signals captured via a webcam. It calculates key health metrics such as heart rate, heart rate variability (HRV), and signal quality using machine learning models. The processed data can be saved to a MongoDB database for further analysis.
 
