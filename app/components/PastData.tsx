@@ -31,11 +31,11 @@ const PastData: React.FC<PastDataProps> = ({ loading, confirmedSubject, lastAcce
                         </div>
                         <div className="flex items-center space-x-2">
                             <FaHeartbeat className="text-red-500" />
-                            <p><strong>Avg Heart Rate:</strong> {historicalData.avgHeartRate.toFixed(1)} BPM</p>
+                            <p><strong>Avg Heart Rate:</strong> {historicalData.avgHeartRate.toFixed(0)} BPM</p>
                         </div>
                         <div className="flex items-center space-x-2">
                             <FaHeartbeat className="text-blue-500" />
-                            <p><strong>Avg HRV:</strong> {historicalData.avgHRV} ms</p>
+                            <p><strong>Avg HRV:</strong> {historicalData.avgHRV.toFixed(0)} ms</p>
                         </div>
                     </div>
                 ) : (
