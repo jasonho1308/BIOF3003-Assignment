@@ -1,16 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useDarkMode } from '../context/DarkModeContext';
 
 const DarkModeToggle: React.FC = () => {
-    const [isDarkMode, setIsDarkMode] = useState(false);
-
-    const toggleDarkMode = () => {
-        setIsDarkMode((prev) => !prev);
-        if (document.documentElement.classList.contains('dark')) {
-            document.documentElement.classList.remove('dark');
-        } else {
-            document.documentElement.classList.add('dark');
-        }
-    };
+    const { isDarkMode, toggleDarkMode } = useDarkMode();
 
     return (
         <button

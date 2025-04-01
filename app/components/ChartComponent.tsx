@@ -24,11 +24,13 @@ ChartJS.register(
 interface ChartComponentProps {
   ppgData: number[];
   valleys: { index: number; value: number }[];
+  isDarkMode: boolean; // Added isDarkMode prop
 }
 
 export default function ChartComponent({
   ppgData,
   valleys,
+  isDarkMode,
 }: ChartComponentProps) {
   const chartData = {
     labels: Array.from({ length: ppgData.length }, (_, i) => i.toString()),
@@ -54,8 +56,6 @@ export default function ChartComponent({
     ],
   };
 
-  const isDarkMode = typeof window !== 'undefined' && document.documentElement.classList.contains('dark');
-
   const chartOptions = {
     responsive: true,
     scales: {
@@ -68,8 +68,8 @@ export default function ChartComponent({
         },
         ticks: {
           color: isDarkMode
-            ? 'rgba(255, 255, 255, 0.9)' // Light tick labels for dark mode
-            : 'rgba(0, 0, 0, 0.9)' // Dark tick labels for light mode
+            ? 'rgba(255, 255, 255, 0.9)' // Adjusted to slightly off-white for better visibility in dark mode
+            : 'rgba(33, 33, 33, 1)' // Darker gray for better visibility in light mode
         },
       },
       x: {
@@ -80,8 +80,8 @@ export default function ChartComponent({
         },
         ticks: {
           color: isDarkMode
-            ? 'rgba(255, 255, 255, 0.9)' // Light tick labels for dark mode
-            : 'rgba(0, 0, 0, 0.9)' // Dark tick labels for light mode
+            ? 'rgba(255, 255, 255, 0.9)' // Adjusted to slightly off-white for better visibility in dark mode
+            : 'rgba(33, 33, 33, 1)' // Darker gray for better visibility in light mode
         },
       },
     },
@@ -89,8 +89,8 @@ export default function ChartComponent({
       legend: {
         labels: {
           color: isDarkMode
-            ? 'rgba(255, 255, 255, 0.9)' // Light legend labels for dark mode
-            : 'rgba(0, 0, 0, 0.9)' // Dark legend labels for light mode
+            ? 'rgba(255, 255, 255, 0.9)' // Adjusted to slightly off-white for better visibility in dark mode
+            : 'rgba(33, 33, 33, 1)' // Darker gray for better visibility in light mode
         },
       },
       title: {

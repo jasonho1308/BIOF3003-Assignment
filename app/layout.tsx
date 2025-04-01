@@ -1,6 +1,8 @@
-import type { Metadata } from "next";
+'use client';
+
 import localFont from "next/font/local";
 import "./globals.css";
+import { DarkModeProvider } from './context/DarkModeContext';
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -12,11 +14,6 @@ const geistMono = localFont({
   variable: "--font-geist-mono",
   weight: "100 900",
 });
-
-export const metadata: Metadata = {
-  title: "Heart Lens",
-  description: "Monitor your pulse",
-};
 
 export default function RootLayout({
   children,
@@ -31,7 +28,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <DarkModeProvider>
+          {children}
+        </DarkModeProvider>
       </body>
     </html>
   );

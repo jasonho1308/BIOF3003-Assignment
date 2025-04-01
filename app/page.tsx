@@ -10,6 +10,7 @@ import PastData from './components/PastData';
 import usePPGProcessing from './hooks/usePPGProcessing';
 import useSignalQuality from './hooks/useSignalQuality';
 import DarkModeToggle from './components/DarkModeToggle';
+import { useDarkMode } from './context/DarkModeContext';
 
 export default function Home() {
   const [isRecording, setIsRecording] = useState(false);
@@ -34,6 +35,8 @@ export default function Home() {
   } = usePPGProcessing(isRecording, signalCombination, videoRef, canvasRef);
 
   const { signalQuality, qualityConfidence } = useSignalQuality(ppgData);
+
+  const { isDarkMode } = useDarkMode();
 
   useEffect(() => {
     if (isRecording) {
@@ -225,8 +228,8 @@ export default function Home() {
           <button
             onClick={() => setIsRecording(!isRecording)}
             className={`p-3 rounded-lg text-sm transition-all duration-300 w-full md:w-auto ${isRecording
-                ? 'bg-danger dark:bg-darkDanger hover:bg-red-600 dark:hover:bg-red-700 text-white'
-                : 'bg-primary dark:bg-darkPrimary hover:bg-cyan-600 dark:hover:bg-cyan-700 text-white'
+              ? 'bg-danger dark:bg-darkDanger hover:bg-red-600 dark:hover:bg-red-700 text-white'
+              : 'bg-primary dark:bg-darkPrimary hover:bg-cyan-600 dark:hover:bg-cyan-700 text-white'
               }`}
           >
             {isRecording ? '⏹ STOP' : '⏺ START'} RECORDING
@@ -285,7 +288,7 @@ export default function Home() {
         <div className="flex flex-col gap-6">
           {/* Chart */}
           <div className="bg-white dark:bg-darkForeground shadow-card p-4 rounded-lg">
-            <ChartComponent ppgData={ppgData} valleys={valleys} />
+            <ChartComponent ppgData={ppgData} valleys={valleys} isDarkMode={isDarkMode} />
             <button
               onClick={pushDataToMongo}
               className="mt-4 w-full px-4 py-2 bg-secondary dark:bg-darkSecondary text-white rounded hover:bg-green-600 dark:hover:bg-green-700"
