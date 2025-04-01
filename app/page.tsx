@@ -18,7 +18,7 @@ export default function Home() {
   const [showConfig, setShowConfig] = useState(false);
   const [currentSubject, setCurrentSubject] = useState('');
   const [confirmedSubject, setConfirmedSubject] = useState('');
-  const [loading, setIsLoading] = useState(false);
+  const [isPastDataloading, setIsPastDataLoading] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -97,7 +97,7 @@ export default function Home() {
         console.error('Error fetching last access:', error);
       }
     }
-    setIsLoading(false);
+    setIsPastDataLoading(false);
   };
 
   const pushDataToMongo = useCallback(async () => {
@@ -160,7 +160,7 @@ export default function Home() {
   }, [ppgData, pushDataToMongo]);
 
   const confirmUser = () => {
-    setIsLoading(true);
+    setIsPastDataLoading(true);
     const subjectId = currentSubject.trim();
     if (subjectId) {
       if (subjectId === confirmedSubject) {
@@ -172,7 +172,7 @@ export default function Home() {
       }
     } else {
       alert('Please enter a valid Subject ID.');
-      setIsLoading(false);
+      setIsPastDataLoading(false);
     }
   };
 
@@ -210,9 +210,9 @@ export default function Home() {
           <button
             onClick={confirmUser}
             className="bg-primary dark:bg-darkPrimary text-white px-4 py-2 rounded-md text-lg h-12 flex items-center justify-center w-full md:w-auto"
-            disabled={loading}
+            disabled={isPastDataloading}
           >
-            {loading
+            {isPastDataloading
               ? 'Loading...'
               : currentSubject && currentSubject.trim() === confirmedSubject
                 ? 'Refresh'
@@ -296,7 +296,7 @@ export default function Home() {
 
           {/* Past Data */}
           <PastData
-            loading={loading}
+            loading={isPastDataloading}
             confirmedSubject={confirmedSubject}
             lastAccess={lastAccess}
             historicalData={historicalData}
