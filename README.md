@@ -89,12 +89,12 @@ The project follows a modular structure to ensure maintainability and readabilit
 ├── /app
 │    ├── api/              # Backend API routes (eg. save-record)
 │    ├── components/       # React components (eg. CameraFeed, ChartComponent)
+│    ├── context/          # React context for global state management
 │    ├── db/               # Database utilities (eg. MongoDb)
 │    ├── fonts/            # Font files
 │    ├── hooks/            # Custom hooks (eg. userPPGProcessing, useSignalQuality)
 │    └── models/           # Data models (eg. RecordSchema)
 ├── /public                # Public assets (e.g., TensorFlow.js model)
-├── /types                 # TypeScript types (if applicable)
 ├── README.md              # Developer instructions
 ├── .env.local             # Environment variables
 ├── .eslintrc.json         # ESLint configuration
